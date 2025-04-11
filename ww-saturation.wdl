@@ -39,16 +39,14 @@ workflow saturation_mutagenesis {
                 input_bam = SamToBam.sorted_bam,
                 input_bai = SamToBam.sorted_bai,
                 reference_fasta = reference_fasta,
+                reference_fasta_index = reference_fasta_index,
                 orf_range = orf_range,
                 sample_name = sample_name
         }
     }
 
     output {
-        Array[File] analysis_tables = AnalyzeSaturationMutagenesis.tablefile
-        Array[File] analysis_plots = AnalyzeSaturationMutagenesis.plotfile
-        Array[File] aligned_bams = SamToBam.sorted_bam
-        Array[File] aligned_bais = SamToBam.sorted_bai
+        Array[File] analysis_vcs = AnalyzeSaturationMutagenesis.variant_counts
     }
 }
 
@@ -66,6 +64,8 @@ task AlignReads {
     String output_sam = "~{sample_name}.aligned.sam"
 
     command <<<
+        set -eo pipefail
+
         # Index the reference genome if not already indexed
         bwa index ~{reference_fasta}
 
@@ -102,6 +102,8 @@ task SamToBam {
     String output_bam = "~{sample_name}.sorted.bam"
 
     command <<<
+        set -eo pipefail
+
         # Convert SAM to BAM and sort
         samtools view -bS ~{input_sam} | samtools sort -@ ~{threads} -o ~{output_bam}
         
@@ -127,21 +129,20 @@ task AnalyzeSaturationMutagenesis {
         File input_bam
         File input_bai
         File reference_fasta
+        File reference_fasta_index
         String orf_range
         String sample_name
         Int memory_gb = 16
     }
 
-    String output_table = "~{sample_name}.mutagenesis_analysis.table"
-    String output_plot = "~{sample_name}.mutagenesis_analysis.pdf"
-
     command <<<
+        set -eo pipefail
+        
         gatk AnalyzeSaturationMutagenesis \
             -R ~{reference_fasta} \
             -I ~{input_bam} \
             --orf ~{orf_range} \
-            --output-table ~{output_table} \
-            --output-plot ~{output_plot}
+            -O ~{sample_name}
     >>>
 
     runtime {
@@ -150,7 +151,6 @@ task AnalyzeSaturationMutagenesis {
     }
 
     output {
-        File tablefile = "~{output_table}"
-        File plotfile = "~{output_plot}"
+        File variant_counts = "~{sample_name}.variantCounts"
     }
 }
