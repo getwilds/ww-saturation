@@ -8,8 +8,7 @@ workflow saturation_mutagenesis {
         File reference_fasta_index
         File reference_dict
         String sample_name
-        File target_gene_sequence
-        String amino_acid_position
+        String orf_range
     }
 
     # Step 1: Align RNA-seq reads to reference using BWA
@@ -34,8 +33,7 @@ workflow saturation_mutagenesis {
             input_bam = SamToBam.sorted_bam,
             input_bai = SamToBam.sorted_bai,
             reference_fasta = reference_fasta,
-            target_gene_sequence = target_gene_sequence,
-            amino_acid_position = amino_acid_position,
+            orf_range = orf_range,
             sample_name = sample_name
     }
 
@@ -122,8 +120,7 @@ task AnalyzeSaturationMutagenesis {
         File input_bam
         File input_bai
         File reference_fasta
-        File target_gene_sequence
-        String amino_acid_position
+        String orf_range
         String sample_name
         Int memory_gb = 16
     }
@@ -135,8 +132,7 @@ task AnalyzeSaturationMutagenesis {
         gatk AnalyzeSaturationMutagenesis \
             -R ~{reference_fasta} \
             -I ~{input_bam} \
-            --gene-sequence ~{target_gene_sequence} \
-            --amino-acid-position ~{amino_acid_position} \
+            --orf ~{orf_range} \
             --output-table ~{output_table} \
             --output-plot ~{output_plot}
     >>>
