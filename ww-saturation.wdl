@@ -40,6 +40,7 @@ workflow saturation_mutagenesis {
                 input_bai = SamToBam.sorted_bai,
                 reference_fasta = reference_fasta,
                 reference_fasta_index = reference_fasta_index,
+                reference_dict = reference_dict,
                 orf_range = orf_range,
                 sample_name = sample_name
         }
@@ -130,6 +131,7 @@ task AnalyzeSaturationMutagenesis {
         File input_bai
         File reference_fasta
         File reference_fasta_index
+        File reference_dict
         String orf_range
         String sample_name
         Int memory_gb = 16
