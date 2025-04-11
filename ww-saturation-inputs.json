@@ -1,10 +1,22 @@
 {
-    "saturation_mutagenesis.fastq_1": "path/to/reads_R1.fastq.gz",
-    "saturation_mutagenesis.fastq_2": "path/to/reads_R2.fastq.gz",
+    "saturation_mutagenesis.fastq_1_array": [
+      "path/to/sample1_R1.fastq.gz",
+      "path/to/sample2_R1.fastq.gz",
+      "path/to/sample3_R1.fastq.gz"
+    ],
+    "saturation_mutagenesis.fastq_2_array": [
+      "path/to/sample1_R2.fastq.gz",
+      "path/to/sample2_R2.fastq.gz",
+      "path/to/sample3_R2.fastq.gz"
+    ],
+    "saturation_mutagenesis.sample_names": [
+      "sample1",
+      "sample2",
+      "sample3"
+    ],
     "saturation_mutagenesis.reference_fasta": "path/to/reference.fasta",
     "saturation_mutagenesis.reference_fasta_index": "path/to/reference.fasta.fai",
     "saturation_mutagenesis.reference_dict": "path/to/reference.dict",
-    "saturation_mutagenesis.sample_name": "sample_id",
     "saturation_mutagenesis.orf_range": "122-781",
     
     "saturation_mutagenesis.AlignReads.threads": 8,

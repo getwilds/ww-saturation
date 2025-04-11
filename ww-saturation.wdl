@@ -2,46 +2,53 @@ version 1.0
 
 workflow saturation_mutagenesis {
     input {
-        File fastq_1
-        File fastq_2
+        Array[File] fastq_1_array
+        Array[File] fastq_2_array
+        Array[String] sample_names
         File reference_fasta
         File reference_fasta_index
         File reference_dict
-        String sample_name
         String orf_range
     }
 
-    # Step 1: Align RNA-seq reads to reference using BWA
-    call AlignReads {
-        input:
-            fastq_1 = fastq_1,
-            fastq_2 = fastq_2,
-            reference_fasta = reference_fasta,
-            sample_name = sample_name
-    }
+    # Scatter over the samples
+    scatter (idx in range(length(sample_names))) {
+        String sample_name = sample_names[idx]
+        File fastq_1 = fastq_1_array[idx]
+        File fastq_2 = fastq_2_array[idx]
 
-    # Step 2: Convert SAM to BAM and sort
-    call SamToBam {
-        input:
-            input_sam = AlignReads.aligned_sam,
-            sample_name = sample_name
-    }
+        # Step 1: Align RNA-seq reads to reference using BWA
+        call AlignReads {
+            input:
+                fastq_1 = fastq_1,
+                fastq_2 = fastq_2,
+                reference_fasta = reference_fasta,
+                sample_name = sample_name
+        }
 
-    # Step 3: Analyze Saturation Mutagenesis
-    call AnalyzeSaturationMutagenesis {
-        input:
-            input_bam = SamToBam.sorted_bam,
-            input_bai = SamToBam.sorted_bai,
-            reference_fasta = reference_fasta,
-            orf_range = orf_range,
-            sample_name = sample_name
+        # Step 2: Convert SAM to BAM and sort
+        call SamToBam {
+            input:
+                input_sam = AlignReads.aligned_sam,
+                sample_name = sample_name
+        }
+
+        # Step 3: Analyze Saturation Mutagenesis
+        call AnalyzeSaturationMutagenesis {
+            input:
+                input_bam = SamToBam.sorted_bam,
+                input_bai = SamToBam.sorted_bai,
+                reference_fasta = reference_fasta,
+                orf_range = orf_range,
+                sample_name = sample_name
+        }
     }
 
     output {
-        File analysis_table = AnalyzeSaturationMutagenesis.tablefile
-        File analysis_plot = AnalyzeSaturationMutagenesis.plotfile
-        File aligned_bam = SamToBam.sorted_bam
-        File aligned_bai = SamToBam.sorted_bai
+        Array[File] analysis_tables = AnalyzeSaturationMutagenesis.tablefile
+        Array[File] analysis_plots = AnalyzeSaturationMutagenesis.plotfile
+        Array[File] aligned_bams = SamToBam.sorted_bam
+        Array[File] aligned_bais = SamToBam.sorted_bai
     }
 }
 
