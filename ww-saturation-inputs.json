@@ -1,0 +1,17 @@
+{
+    "saturation_mutagenesis.fastq_1": "path/to/reads_R1.fastq.gz",
+    "saturation_mutagenesis.fastq_2": "path/to/reads_R2.fastq.gz",
+    "saturation_mutagenesis.reference_fasta": "path/to/reference.fasta",
+    "saturation_mutagenesis.reference_fasta_index": "path/to/reference.fasta.fai",
+    "saturation_mutagenesis.reference_dict": "path/to/reference.dict",
+    "saturation_mutagenesis.sample_name": "sample_id",
+    "saturation_mutagenesis.orf_range": "122-781",
+    
+    "saturation_mutagenesis.AlignReads.threads": 8,
+    "saturation_mutagenesis.AlignReads.memory_gb": 16,
+    
+    "saturation_mutagenesis.SamToBam.threads": 4,
+    "saturation_mutagenesis.SamToBam.memory_gb": 8,
+    
+    "saturation_mutagenesis.AnalyzeSaturationMutagenesis.memory_gb": 32
+  }
