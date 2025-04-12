@@ -37,7 +37,6 @@ workflow saturation_mutagenesis {
         call AnalyzeSaturationMutagenesis {
             input:
                 input_bam = SamToBam.sorted_bam,
-                input_bai = SamToBam.sorted_bai,
                 reference_fasta = reference_fasta,
                 reference_fasta_index = reference_fasta_index,
                 reference_dict = reference_dict,
@@ -47,7 +46,14 @@ workflow saturation_mutagenesis {
     }
 
     output {
-        Array[File] analysis_vcs = AnalyzeSaturationMutagenesis.variant_counts
+        Array[File] variant_counts = AnalyzeSaturationMutagenesis.variant_counts
+        Array[File] aa_counts = AnalyzeSaturationMutagenesis.aa_counts
+        Array[File] aa_fractions = AnalyzeSaturationMutagenesis.aa_fractions
+        Array[File] codon_counts = AnalyzeSaturationMutagenesis.codon_counts
+        Array[File] codon_fractions = AnalyzeSaturationMutagenesis.codon_fractions
+        Array[File] cov_length_counts = AnalyzeSaturationMutagenesis.cov_length_counts
+        Array[File] read_counts = AnalyzeSaturationMutagenesis.read_counts
+        Array[File] ref_coverage = AnalyzeSaturationMutagenesis.ref_coverage
     }
 }
 
@@ -105,11 +111,8 @@ task SamToBam {
     command <<<
         set -eo pipefail
 
-        # Convert SAM to BAM and sort
-        samtools view -bS ~{input_sam} | samtools sort -@ ~{threads} -o ~{output_bam}
-        
-        # Index the BAM file
-        samtools index ~{output_bam}
+        # Convert SAM to BAM
+        samtools view -b -o ~{output_bam} ~{input_sam}
     >>>
 
     runtime {
@@ -120,7 +123,6 @@ task SamToBam {
 
     output {
         File sorted_bam = "~{output_bam}"
-        File sorted_bai = "~{output_bam}.bai"
     }
 }
 
@@ -128,7 +130,6 @@ task SamToBam {
 task AnalyzeSaturationMutagenesis {
     input {
         File input_bam
-        File input_bai
         File reference_fasta
         File reference_fasta_index
         File reference_dict
@@ -153,6 +154,13 @@ task AnalyzeSaturationMutagenesis {
     }
 
     output {
+        File aa_counts = "~{sample_name}.aaCounts"
+        File aa_fractions = "~{sample_name}.aaFractions"
+        File codon_counts = "~{sample_name}.codonCounts"
+        File codon_fractions = "~{sample_name}.codonFractions"
+        File cov_length_counts = "~{sample_name}.coverageLengthCounts"
+        File read_counts = "~{sample_name}.readCounts"
+        File ref_coverage = "~{sample_name}.refCoverage"
         File variant_counts = "~{sample_name}.variantCounts"
     }
 }
