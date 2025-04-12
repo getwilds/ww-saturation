@@ -1,4 +1,4 @@
-# Saturation Mutagenesis Workflow
+# ww-saturation: Saturation Mutagenesis Workflow
 
 ## Overview
 
@@ -9,13 +9,13 @@ This repository contains a WDL (Workflow Description Language) pipeline for perf
 For each sample in parallel:
 
 1. **Alignment (BWA)**: Paired-end reads are aligned to a reference genome
-2. **SAM to BAM Conversion**: The aligned reads are converted from SAM to BAM format and indexed
+2. **SAM to BAM Conversion**: The aligned reads are converted from SAM to BAM format
 3. **Saturation Mutagenesis Analysis**: GATK's AnalyzeSaturationMutagenesis tool analyzes mutations across the specified ORF range
 
 ## Files in this Repository
 
-- `ww-saturation-parallel.wdl`: Multi-sample parallel workflow definition
-- `ww-saturation-parallel-inputs.json`: Example input parameters for the workflow
+- `ww-saturation.wdl`: The main workflow definition file
+- `ww-saturation-inputs.json`: Example input parameters for the workflow
 - `ww-saturation-options.json`: Runtime configuration options for Cromwell
 
 ## Requirements
@@ -47,7 +47,7 @@ For each sample in parallel:
 
 3. **Run the workflow**:
    ```bash
-   java -jar cromwell.jar run ww-saturation-parallel.wdl -i ww-saturation-parallel-inputs.json -o ww-saturation-options.json
+   java -jar cromwell.jar run ww-saturation.wdl -i ww-saturation-inputs.json -o ww-saturation-options.json
    ```
 
 ## Input Parameters
@@ -76,10 +76,16 @@ Task-specific resources can be configured in the inputs file:
 
 The workflow produces arrays of output files:
 
-- `analysis_tables`: Array of tab-delimited tables of saturation mutagenesis results
-- `analysis_plots`: Array of PDF visualizations of the saturation mutagenesis results
-- `aligned_bams`: Array of sorted BAM files containing aligned reads
-- `aligned_bais`: Array of index files for the aligned BAMs
+- `variant_counts`: Counts of different variants observed at each position
+- `aa_counts`: Amino acid counts at each position
+- `aa_fractions`: Amino acid fractions (frequencies) at each position
+- `codon_counts`: Counts of different codons at each position
+- `codon_fractions`: Codon fractions (frequencies) at each position
+- `cov_length_counts`: Coverage length distribution data
+- `read_counts`: Read counts information
+- `ref_coverage`: Reference coverage statistics
+
+Each output file array contains one file per input sample.
 
 ## Runtime Options
 
@@ -95,7 +101,6 @@ The `ww-saturation-options.json` file contains Cromwell runtime options:
 The workflow:
 
 - Processes multiple samples simultaneously using WDL's scatter-gather mechanism
-- Validates input arrays (checks that all arrays have the same length)
 - Returns arrays of output files
 - Can significantly reduce total execution time when processing multiple samples
 
