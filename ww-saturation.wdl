@@ -17,7 +17,7 @@ workflow saturation_mutagenesis {
         File fastq_1 = fastq_1_array[idx]
         File fastq_2 = fastq_2_array[idx]
 
-        # Step 1: Align RNA-seq reads to reference using BWA
+        # Step 1: Align Nextera sequencing reads to reference using BWA
         call AlignReads {
             input:
                 fastq_1 = fastq_1,
@@ -57,7 +57,7 @@ workflow saturation_mutagenesis {
     }
 }
 
-# Align RNA-seq reads to reference using BWA
+# Align Nextera sequencing reads to reference using BWA
 task AlignReads {
     input {
         File fastq_1
