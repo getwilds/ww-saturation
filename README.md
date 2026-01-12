@@ -1,3 +1,6 @@
+> [!WARNING]
+> **This repository has been archived as of 2026-01-12.** The functionality has been migrated to the [WILDS WDL Library](https://github.com/getwilds/wilds-wdl-library) as the [`ww-saturation` pipeline](https://github.com/getwilds/wilds-wdl-library/tree/main/pipelines/ww-saturation). Please refer to that instance for the latest versions, documentation, and updates.
+
 # ww-saturation: Saturation Mutagenesis Workflow
 
 ## Overview
